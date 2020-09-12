@@ -1,0 +1,17 @@
+{
+  "name": "pdf-thumbnails",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^3.2.0",
+    "gm": "^1.23.1",
+    "gs": "https://github.com/sina-masnadi/node-gs/tarball/master",
+    "mktemp": "^1.0.0"
+  }
+}

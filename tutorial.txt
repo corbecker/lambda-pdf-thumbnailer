@@ -1,0 +1,47 @@
+http://marceloalves.com/tutorials/lambda/2016/02/26/pdf_to_image_thumbnail_using_lambda/
+
+A recent project of ours needed thumbnails to be generated from PDF’s that were uploaded to S3. It took some time searching but I finally found a script from  kageurufu that did exactly what I was looking for. Unfortunately there wasn’t anything on how to actually set it all up so here’s a handy guide!
+
+Create The Project
+
+Download this gist  and save it in a new folder as index.js
+In a terminal window run the following commands (replace /path/to/your/project/folder with the actual path of course)
+  $ cd /path/to/your/project/folder
+  $ npm init
+  $ npm install --save gm async mktemp
+You can modify the desired thumbnail size on line 8 and 9. The resulting thumbnail will fit within the bounds specified. Once you’re finished, zip up the contents of the folder. Make sure you compress the files and not the folder itself.
+
+Set up S3
+
+Create a new bucket where the PDF files will be stored. Inside that bucket create a folder named “thumbnails”. The Lambda function and S3 Bucket need to be in the same region.
+
+Set Up Lambda
+
+Visit Lambda in your AWS Console. If this is your first Lambda function there will be an option labeled “Get Started Now”. If not, select “Create a Lambda Function”
+Since we have our own function to upload, we won’t be selecting a blueprint. Click “Skip”
+Give your Lambda function a name. Here’s a free one: pdfThumbnailer (clever right?)
+Select “Upload a .ZIP file” then click “Upload” and select your newly created zip file
+Handler should be left as index.handler since the main file is index.js
+For Role select “S3 Execution Role”. We’ll need to make a small tweak to this role. In the new window, hit “View Policy Document” then “Edit”. Replace the contents with:
+
+The small change we’ve made was added s3:PutObjectAcl
+
+If the PDF are pretty large you can increase the timeout value. Our PDF’s would convert somewhere around 6 seconds.
+Click “Next”, verify everything you’ve put in is correct then hit “Finish”
+Event Source
+
+Now that you have a newly created Lambda function we need to add an Event Source. Visit the Event Source tab and select “Add event source”.
+
+Select S3 as your Event source type
+Select the bucket where your PDF’s will be uploaded
+Select Object Created (All) as the Event type
+If you’d like to limit the filetype to PDF only, put in pdf for the Suffix
+Hit “Submit” to finish
+
+Test It
+
+You’ve got a Lambda function and now an Event source so whats next? Well test it of course. The easiest way to do this is to upload a PDF file to your bucket. Within a second or two you should have a brand new PNG in the “thumbnails” folder with the same name of the PDF you’ve uploaded.
+
+Conclusion
+
+If everything works out you’ll have a fancy Lambda function that can create a thumbnail image from a PDF file. This function can actually be reused for anything you need a thumbnail for including other images. This only scratches the surface of what Lambda can do. Definitely check out the docs  and have some fun!
